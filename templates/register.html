@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Registration - LifeLink</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav>
+        <h2 class="logo">LifeLink</h2>
+        <a href="/">Home</a>
+    </nav>
+
+    <section class="form-section">
+        <h1>Donor Registration</h1>
+
+        <p>This is a sample registration form for the college prototype.
+        It does not save or submit personal information.</p>
+
+        <form onsubmit="showDemoMessage(event)">
+            <input type="text" placeholder="Enter your name" required>
+            <input type="number" id="age" name="age" placeholder="Your Age (18 - 65)" oninput="validateEligibility()" required>
+<input type="number" id="weight" name="weight" placeholder="Weight in kg (min 50 kg)" oninput="validateEligibility()" required>
+<label style="font-size: 13px; color: #555; text-align: left;">Last Donation Date (Leave blank if first-time donor):</label>
+<input type="date" id="lastDonation" name="last_donation" onchange="validateEligibility()">
+
+<div id="eligibilityMsg" class="eligibility-msg"></div>    
+            <select required>
+                <option value="">Select Blood Group</option>
+                <option>A+</option>
+                <option>A-</option>
+                <option>B+</option>
+                <option>B-</option>
+                <option>O+</option>
+                <option>O-</option>
+                <option>AB+</option>
+                <option>AB-</option>
+            </select>
+
+            <input type="text" placeholder="Enter city" required>
+
+            <button type="submit">Submit Demo Form</button>
+        </form>
+
+        <p id="message"></p>
+    </section>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+    function validateEligibility() {
+        const age = parseInt(document.getElementById("age").value);
+        const weight = parseInt(document.getElementById("weight").value);
+        const lastDate = document.getElementById("lastDonation").value;
+        const msgBox = document.getElementById("eligibilityMsg");
+
+        if (!age && !weight) {
+            msgBox.style.display = "none";
+            return;
+        }
+
+        let reasons = [];
+        if (age && (age < 18 || age > 65)) reasons.push("Age must be between 18 and 65.");
+        if (weight && weight < 50) reasons.push("Minimum weight required is 50 kg.");
+
+        if (lastDate) {
+            const daysSince = (new Date() - new Date(lastDate)) / (1000 * 60 * 60 * 24);
+            if (daysSince < 90) {
+                reasons.push(`Must wait ${Math.ceil(90 - daysSince)} more days since last donation.`);
+            }
+        }
+
+        msgBox.style.display = "block";
+        if (reasons.length > 0) {
+            msgBox.style.backgroundColor = "#f8d7da";
+            msgBox.style.color = "#721c24";
+            msgBox.textContent = "Not Eligible Yet: " + reasons.join(" ");
+        } else {
+            msgBox.style.backgroundColor = "#d4edda";
+            msgBox.style.color = "#155724";
+            msgBox.textContent = "You are eligible to donate blood today!";
+        }
+    }
+</script>
+</body>
+</html>

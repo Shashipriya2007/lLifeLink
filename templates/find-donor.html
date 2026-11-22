@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Donor - LifeLink</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav>
+        <h2 class="logo">LifeLink</h2>
+        <a href="/">Home</a>
+    </nav>
+
+    <section class="form-section">
+        <h1>Find a Donor</h1>
+
+        <form method="POST">
+            <select name="blood_group" required>
+                <option value="">Select Blood Group</option>
+                <option>A+</option>
+                <option>A-</option>
+                <option>B+</option>
+                <option>B-</option>
+                <option>O+</option>
+                <option>O-</option>
+                <option>AB+</option>
+                <option>AB-</option>
+            </select>
+
+            <input type="text" name="city"
+                   placeholder="Enter city" required>
+
+            <button type="submit">Search</button>
+        </form>
+
+        <h2>Search Results</h2>
+
+        {% if donors %}
+            {% for donor in donors %}
+                <div class="donor-card">
+            <div class="blood-badge">{{ donor.blood_group }}</div>
+            <h3>{{ donor.name }}</h3>
+            <p><strong>City:</strong> {{ donor.city }}</p>
+            {% if donor.phone %}
+                <p><strong>Phone:</strong> {{ donor.phone }}</p>
+            {% endif %}
+
+            {% if donor.is_available %}
+                <span class="status-pill status-available">Available to Donate</span>
+            {% else %}
+                <span class="status-pill status-unavailable">Recently Donated</span>
+            {% endif %}
+
+            {% if donor.phone %}
+            <div class="contact-actions">
+                <a href="tel:{{ donor.phone }}" class="btn-call">Call Now</a>
+                <a href="https://wa.me/91{{ donor.phone }}?text=Hi%20{{ donor.name }},%20I%20found%20your%20contact%20on%20LifeLink%20and%20need%20{{ donor.blood_group }}%20blood." target="_blank" class="btn-whatsapp">WhatsApp</a>
+            </div>
+            {% endif %}
+        </div>
+                
+            {% endfor %}
+        {% elif request.method == "POST" %}
+            <p>No matching demo records found.</p>
+        {% endif %}
+
+    </section>
+
+</body>
+</html>
